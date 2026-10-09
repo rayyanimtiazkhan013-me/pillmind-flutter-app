@@ -9,7 +9,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
       - name: Set up Java
         uses: actions/setup-java@v3
@@ -23,17 +24,24 @@ jobs:
           flutter-version: '3.19.x'
           channel: 'stable'
 
-      - name: Auto-Generate Android Scaffolding
-        run: flutter create . --platforms=android --org com.pillmind
+      - name: Generate Project Scaffolding
+        run: |
+          flutter create pillmind_app --platforms=android --org com.pillmind
+          cp pubspec.yaml pillmind_app/
+          cp -r lib/ pillmind_app/
 
       - name: Get Dependencies
-        run: flutter pub get
+        run: |
+          cd pillmind_app
+          flutter pub get
 
       - name: Build APK
-        run: flutter build apk --release
+        run: |
+          cd pillmind_app
+          flutter build apk --release
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: PillMind-AI-Release-APK
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: pillmind_app/build/app/outputs/flutter-apk/app-release.apk
