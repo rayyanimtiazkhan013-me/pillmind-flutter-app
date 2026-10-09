@@ -24,11 +24,13 @@ jobs:
           flutter-version: '3.19.x'
           channel: 'stable'
 
-      - name: Generate Project Scaffolding
+      - name: Generate Scaffolding & Inject PillMind Code
         run: |
           flutter create pillmind_app --platforms=android --org com.pillmind
-          cp pubspec.yaml pillmind_app/
-          cp -r lib/ pillmind_app/
+          cp pubspec.yaml pillmind_app/pubspec.yaml
+          rm -rf pillmind_app/lib
+          cp -r lib pillmind_app/lib
+          sed -i 's/flutter.minSdkVersion/21/g' pillmind_app/android/app/build.gradle || true
 
       - name: Get Dependencies
         run: |
